@@ -6,6 +6,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      CLOUDFRONT_DISTRIBUTION_ID: E1CNHXUV80J7RN
+      
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -21,4 +24,7 @@ jobs:
           aws-region: us-east-1
       - run: aws s3 sync ./build s3://demo-aws.jklgroup.in
       - name: Copy files to the production website with the AWS CLI
-       
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"
